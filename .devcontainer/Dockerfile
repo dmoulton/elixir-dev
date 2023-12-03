@@ -22,7 +22,7 @@ RUN apt-get update \
      # Install bash tree
     && apt-get -y install --no-install-recommends tree \
     # Install git iproute2, procps, lsb-release (useful for CLI installs)
-    && apt-get -y install --no-install-recommends git iproute2 procps iproute2 lsb-release ca-certificates \
+    && apt-get -y install --no-install-recommends git iproute2 procps iproute2 lsb-release ca-certificates openssh-client \
     #
     # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.
     && groupadd --gid $USER_GID $USERNAME \
@@ -39,7 +39,7 @@ RUN apt-get update \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /workspace
+# WORKDIR /workspace
 # VOLUME /workspace
 
 # Switch back to dialog for any ad-hoc use of apt-get
