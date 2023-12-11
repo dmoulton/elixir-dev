@@ -1,4 +1,4 @@
-FROM elixir:1.15.7-otp-25-slim
+FROM elixir:1.15.7-otp-25
 
 LABEL org.opencontainers.image.description="Elixir devcontainer for VSCode"
 LABEL org.opencontainers.image.source=https://github.com/hspaans/elixir-devcontainer
@@ -14,34 +14,19 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-# Configure apt and install packages
-# hadolint ignore=DL3008
 RUN apt-get update \
-    && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
-    #
-     # Install bash tree
-    && apt-get -y install --no-install-recommends tree wget openssh-client \
-    # Install git iproute2, procps, lsb-release (useful for CLI installs)
-    && apt-get -y install --no-install-recommends git iproute2 procps iproute2 lsb-release ca-certificates zsh\
-    #
-    # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.
+    && apt-get -y install --no-install-recommends apt-utils dialog wget sudo git lsb-release ca-certificates zsh \
     && groupadd --gid $USER_GID $USERNAME \
     && useradd -s /bin/zsh --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    # [Optional] Add sudo support for the non-root user
-    && apt-get install -y sudo \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME \
-    #
-    && mkdir /workspace  \
-    && sudo chown $USERNAME.$USERNAME /workspace \
-
     # Clean up
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-# WORKDIR /workspace
-# VOLUME /workspace
+WORKDIR /workspace
+VOLUME /workspace
 
 USER $USERNAME
 ENV HOME /home/$USERNAME
@@ -51,3 +36,6 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog
+
+# Install Phoenix & Ecto
+RUN mix local.hex --force -if-missing && mix archive.install --force hex phx_new
