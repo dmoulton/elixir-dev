@@ -15,7 +15,7 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 RUN apt-get update \
-    && apt-get -y install --no-install-recommends apt-utils dialog wget sudo git lsb-release ca-certificates zsh \
+    && apt-get -y install --no-install-recommends apt-utils dialog wget sudo git lsb-release ca-certificates inotify-tools zsh \
     && groupadd --gid $USER_GID $USERNAME \
     && useradd -s /bin/zsh --uid $USER_UID --gid $USER_GID -m $USERNAME \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
